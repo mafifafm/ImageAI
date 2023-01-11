@@ -581,9 +581,9 @@ class CustomObjectDetection:
 
                     displayed_label = ""
                     if display_object_name:
-                        displayed_label = f"{self.__classes[int(pred[-1].item())]} : "
+                        displayed_label = f"{self.__classes[int(pred[-1].item())]}"
                     if display_percentage_probability:
-                        displayed_label += f" {percentage_conf}%"
+                        displayed_label += f" : {percentage_conf}%"
 
 
                     original_imgs[int(pred[0].item())] = draw_bbox_and_label(pred[1:5].int() if display_box else None,
