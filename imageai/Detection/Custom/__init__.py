@@ -568,6 +568,13 @@ class CustomObjectDetection:
             original_input_image = cv2.cvtColor(original_imgs[0], cv2.COLOR_RGB2BGR)
             if isinstance(output, torch.Tensor):
                 for pred in output:
+                    pred_label = self.__classes[int(pred[-1])]
+                    if custom_objects:
+                        if pred_label.replace(" ", "_") in custom_objects.keys():
+                            if not custom_objects[pred_label.replace(" ", "_")]:
+                                continue
+                        else:
+                            continue
                     percentage_conf = round(float(pred[-2]) * 100, 2)
                     if percentage_conf < minimum_percentage_probability:
                         continue
@@ -681,7 +688,7 @@ class CustomVideoObjectDetection:
     def detectObjectsFromVideo(self, input_file_path="", camera_input=None, output_file_path="", frames_per_second=20,
                                frame_detection_interval=1, minimum_percentage_probability=40, log_progress=False,
                                display_percentage_probability=True, display_object_name=True, display_box=True, save_detected_video=True,
-                               per_frame_function=None, per_second_function=None, per_minute_function=None,
+                               per_frame_function=None, per_second_function=None, per_minute_function=None, custom_objects=None,
                                video_complete_function=None, return_detected_frame=False, detection_timeout = None):
 
         """
@@ -695,6 +702,7 @@ class CustomVideoObjectDetection:
         * log_progress (optional) , which states if the progress of the frame processed is to be logged to console
         * display_percentage_probability (optional), can be used to hide or show probability scores on the detected video frames
         * display_object_name (optional), can be used to show or hide object names on the detected video frames
+        * custom_objects (optional), a dictionary of detectable objects set to boolean values
         * save_save_detected_video (optional, True by default), can be set to or not to save the detected video
         * per_frame_function (optional), this parameter allows you to parse in a function you will want to execute after each frame of the video is detected. If this parameter is set to a function, after every video  frame is detected, the function will be executed with the following values parsed into it:
             -- position number of the frame
@@ -814,7 +822,7 @@ class CustomVideoObjectDetection:
                                 minimum_percentage_probability=minimum_percentage_probability,
                                 display_percentage_probability=display_percentage_probability,
                                 display_object_name=display_object_name,
-                                display_box=display_box)
+                                display_box=display_box, custom_objects=custom_objects)
                             
                         except Exception as e:
                             warnings.warn()
